@@ -13,7 +13,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import numpy as np
 
 
-def mostrar_grpafica(dispositivos=[]):
+def mostrar_grafica(dispositivos=[]):
     # Definir los puntos en el tiempo
     images = []
 

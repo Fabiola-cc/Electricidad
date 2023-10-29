@@ -23,6 +23,24 @@ ventana.geometry("700x650")
 def clear_frame():
     for widgets in ventana.winfo_children():
       widgets.destroy()
+    # Crear un Scrollbar vertical
+    scrollbar = tk.Scrollbar(ventana, orient="vertical")
+
+    # Crear un Canvas para contener el contenido deslizable
+    canvas = tk.Canvas(ventana, yscrollcommand=scrollbar.set)
+    canvas.pack(side="left", fill="both", expand=True)
+
+    # Asociar el Scrollbar con el Canvas
+    scrollbar.config(command=canvas.yview)
+    scrollbar.pack(side="right", fill="y")
+
+    frame = ttk.Frame(canvas)
+    canvas.create_window((0, 0), window=frame, anchor="n") 
+
+    # Configurar el Scrollbar para ajustar al contenido
+    frame.bind("<Configure>", lambda event, canvas=canvas: canvas.configure(scrollregion=canvas.bbox("all")))
+
+    return frame
 
 #Opciones
 elementos = [
@@ -47,108 +65,138 @@ elementos = [
     dispositivo("Luces"),
     dispositivo("Cámara de Seguridad")]
 
-def crear_contenido(frame):
+def seleccion_dispositivos(frame):
+    # Listas para almacenar las variables de entrada
+    seleccionados = []
+    for i, dispositivo in enumerate(elementos):
+        fila = i // 2 + 5  # Ajustar las filas para etiquetas y campos de entrada
+        columna = i % 2 * 5  # Alternar entre dos columnas para casillas de verificación
+
+        Input_Seleccion = tk.IntVar()
+        seleccionados.append(Input_Seleccion)
+        tk.Checkbutton(frame, text=dispositivo.nombre, variable=Input_Seleccion).grid(row=fila, column=columna, sticky="w")
+
+    ttk.Label(frame, text="", font="Times 8").grid(row=fila + 1, column=0, columnspan=10)
+    ttk.Button(frame, text="Listo", command=lambda: agregar_datos(seleccionados)).grid(row=fila + 2, column=0, columnspan=10)
+
+def agregar_datos(seleccionados):
+    frame = clear_frame()
+    #Solicitud largo
+    ttk.Label(frame, text="", font="Times 10").grid(row=1, column=0, columnspan=10)
+    ttk.Label(frame, text="¿cual es el largo del cable que conectará a los dispositivos?", font="Times 12").grid(row=2, column=0, columnspan=3)
+    largo_cable = tk.DoubleVar()
+    ttk.Entry(frame, textvariable=largo_cable, width=15).grid(row=3, column=0, columnspan=3)
+
+    #Datos dispositivos
+    ttk.Label(frame, text="Para cada uno de los elementos que selecciones ingresa su potencia, voltaje, corriente y las horas de uso diarias del mismo", font="Times 12").grid(row=4, column=0, columnspan=10)
+    ttk.Label(frame, text="", font="Times 10").grid(row=5, column=0, columnspan=10)
     fila_actual = 6  # Fila inicial
 
     # Listas para almacenar las variables de entrada
-    seleccionados = []
+    dispositivos=[]
     variables_potencia = []
     variables_voltaje = []
     variables_corriente = []
     variables_tiempo = []
 
-    for i, dispositivo in enumerate(elementos):
-        if i % 2 == 0:
-            columna = 0
-            fila_actual += 6
-        elif i == 1:
-            columna = 5
-        else:
-            columna = 5
+    for i, valor in enumerate(seleccionados):
+        if valor.get() == 1:
+            dispositivos.append(elementos[i])
 
-        Input_Seleccion = tk.IntVar()
-        seleccionados.append(Input_Seleccion)
-        tk.Checkbutton(frame, text=dispositivo.nombre, variable=Input_Seleccion).grid(row=fila_actual, column=columna, sticky="w")
+    if len(dispositivos)<=10 and len(dispositivos)!=0:
+        for i, disp in enumerate(dispositivos):
+            if i % 2 == 0:
+                columna = 0
+                fila_actual += 6
+            elif i == 1:
+                columna = 5
+            else:
+                columna = 5
 
-        # Crear variables para potencia, voltaje, corriente y tiempo
-        variable_potencia = tk.DoubleVar()
-        variable_voltaje = tk.DoubleVar()
-        variable_corriente = tk.DoubleVar()
-        variable_tiempo = tk.DoubleVar()
+            ttk.Label(frame, text=disp.nombre, font="Times 11").grid(row=fila_actual, column=columna, sticky="w")
 
-        # Agregar las variables a las listas
-        variables_potencia.append(variable_potencia)
-        variables_voltaje.append(variable_voltaje)
-        variables_corriente.append(variable_corriente)
-        variables_tiempo.append(variable_tiempo)
+            # Crear variables para potencia, voltaje, corriente y tiempo
+            variable_potencia = tk.DoubleVar()
+            variable_voltaje = tk.DoubleVar()
+            variable_corriente = tk.DoubleVar()
+            variable_tiempo = tk.DoubleVar()
 
-        # Etiquetas y campos de entrada para potencia, voltaje, corriente y tiempo
-        ttk.Label(frame, text="Potencia (W):", font="Times 8").grid(row=fila_actual + 1, column=columna, sticky="w")
-        ttk.Entry(frame, textvariable=variable_potencia, width=5).grid(row=fila_actual + 1, column=columna + 1)
+            # Agregar las variables a las listas
+            variables_potencia.append(variable_potencia)
+            variables_voltaje.append(variable_voltaje)
+            variables_corriente.append(variable_corriente)
+            variables_tiempo.append(variable_tiempo)
 
-        ttk.Label(frame, text="Voltaje (V):", font="Times 8").grid(row=fila_actual + 2, column=columna, sticky="w")
-        ttk.Entry(frame, textvariable=variable_voltaje, width=5).grid(row=fila_actual + 2, column=columna + 1)
+            # Etiquetas y campos de entrada para potencia, voltaje, corriente y tiempo
+            ttk.Label(frame, text="Potencia (W):", font="Times 8").grid(row=fila_actual + 1, column=columna, sticky="w")
+            ttk.Entry(frame, textvariable=variable_potencia, width=5).grid(row=fila_actual + 1, column=columna + 1)
 
-        ttk.Label(frame, text="Corriente (A):", font="Times 8").grid(row=fila_actual + 3, column=columna, sticky="w")
-        ttk.Entry(frame, textvariable=variable_corriente, width=5).grid(row=fila_actual + 3, column=columna + 1)
+            ttk.Label(frame, text="Voltaje (V):", font="Times 8").grid(row=fila_actual + 2, column=columna, sticky="w")
+            ttk.Entry(frame, textvariable=variable_voltaje, width=5).grid(row=fila_actual + 2, column=columna + 1)
 
-        ttk.Label(frame, text="Tiempo (h):", font="Times 8").grid(row=fila_actual + 4, column=columna, sticky="w")
-        ttk.Entry(frame, textvariable=variable_tiempo, width=5).grid(row=fila_actual + 4, column=columna + 1)
+            ttk.Label(frame, text="Corriente (A):", font="Times 8").grid(row=fila_actual + 3, column=columna, sticky="w")
+            ttk.Entry(frame, textvariable=variable_corriente, width=5).grid(row=fila_actual + 3, column=columna + 1)
 
-        ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual + 5, column=columna, sticky="w")
-    ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual +6, column=0, columnspan=10)
-    ttk.Button(frame, text="Listo", command=lambda: recopilar_informacion(seleccionados, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo)).grid(row=fila_actual + 7, column=0, columnspan=10)
+            ttk.Label(frame, text="Tiempo (h):", font="Times 8").grid(row=fila_actual + 4, column=columna, sticky="w")
+            ttk.Entry(frame, textvariable=variable_tiempo, width=5).grid(row=fila_actual + 4, column=columna + 1)
 
-def recopilar_informacion(seleccionados, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo):
-    datos = []
-    for i, dispositivo in enumerate(elementos):
-            dispositivo.set_seleccion(seleccionados[i].get())
+            ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual + 5, column=columna, sticky="w")
+
+        ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual +6, column=0, columnspan=10)
+        ttk.Button(frame, text="Listo", command=lambda: recopilar_informacion(largo_cable, dispositivos, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo)).grid(row=fila_actual + 7, column=0, columnspan=10)
+    else:
+        ttk.Label(frame, text="Haz seleccionado más de 10 dispositivos o ninguno\nRegresa y selecciona entre 1 y 10 dispositivos", font="Times 8").grid(row=fila_actual +6, column=0, columnspan=10)
+        ttk.Button(frame, text="Atrás", command=main).grid(row=fila_actual + 7, column=0, columnspan=10)
+
+def recopilar_informacion(largo_cable, dispositivos, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo):
+    for i, dispositivo in enumerate(dispositivos):
+            dispositivo.set_seleccion(1)
             dispositivo.set_potencia(variables_potencia[i].get())
             dispositivo.set_voltaje(variables_voltaje[i].get())
             dispositivo.set_corriente(variables_corriente[i].get())
             dispositivo.set_tiempo(variables_tiempo[i].get())
 
-    for dispositivo in elementos:
-        if dispositivo.get_seleccion() == 1:
-            datos.append(dispositivo)
+    show_results(largo_cable, dispositivos)
 
-    if len(datos) <= 10 and len(datos) != 0:
-        
-        pass #HACER CALCULOS
+def show_results(largo_cable, dispositivos):
+    frame = clear_frame()
+    tk.Label(frame, text="", font="Times 10").grid(row=1, column=0, columnspan=10)
+    costo_total = 0
+    corriente_total = 0
+    voltaje_total = 0
+    nombres = []
+    for i, dispositivo in enumerate(dispositivos):
+        nombres.append(dispositivo.nombre)
+        corriente_total += dispositivo.get_corriente()
+        voltaje_total += dispositivo.get_voltaje()
+        potencia_calculada = calc.Confirmacion_potencia(dispositivo.get_voltaje(), dispositivo.get_corriente())
+        if potencia_calculada == dispositivo.get_potencia():
+            ttk.Label(frame, text="Se ha corregido el valor de la potencia en: " + dispositivo.nombre, font="Times 10").grid(row=i+1, column=0, columnspan=10)
+        costo_total += calc.calculo_costo(potencia_calculada, dispositivo.get_tiempo(), 30)
+
+    calibre = calc.calculo_calibre(corriente_total, largo_cable, voltaje_total)
+    if calibre == 0:
+        ttk.Label(frame, text="El diametro es mayor al que este programa calcula, prueba con otros datos", font="Times 12").grid(row=11, column=0, columnspan=10)
     else:
-        main()
+        ttk.Label(frame, text="El calibre del cable a usar es:" + calibre, font="Times 12").grid(row=11, column=0, columnspan=10)
+    ttk.Label(frame, text="Se cobrarán Q." + costo_total + "en el mes", font="Times 12").grid(row=12, column=0, columnspan=10)
+    ttk.Label(frame, text="Esta es una factura de Cobro de Baja Tensión Simple Social - BTSS", font="Times 10").grid(row=13, column=0, columnspan=10)
 
+    graficas.mostrar_grafica(nombres)
+    
 def main():
-    clear_frame()
-    # Crear un Scrollbar vertical
-    scrollbar = tk.Scrollbar(ventana, orient="vertical")
-
-    # Crear un Canvas para contener el contenido deslizable
-    canvas = tk.Canvas(ventana, yscrollcommand=scrollbar.set)
-    canvas.pack(side="left", fill="both", expand=True)
-
-    # Asociar el Scrollbar con el Canvas
-    scrollbar.config(command=canvas.yview)
-    scrollbar.pack(side="right", fill="y")
-
-    frame = ttk.Frame(canvas)
-    canvas.create_window((0, 0), window=frame, anchor="n") 
-
-    # Configurar el Scrollbar para ajustar al contenido
-    frame.bind("<Configure>", lambda event, canvas=canvas: canvas.configure(scrollregion=canvas.bbox("all")))
-
+    frame = clear_frame()
     # Encabezado
     ttk.Label(frame, text="\nEjercicio 5 - Parcial 3 - Física 3", font="Times 10 italic").grid(row=0, column=0, columnspan=15)
     ttk.Label(frame, text="Fabiola Contreras 22787\tMaría José Villafuerte 22129", font="Times 10 italic").grid(row=1, column=0, columnspan=10)
     
     # Título
     ttk.Label(frame, text="¿Qué elementos deseas tomar en consideración?", font="Times 20").grid(row=2, column=0, columnspan=10)
-    ttk.Label(frame, text="Para cada uno de los elementos que selecciones ingresa su potencia, voltaje, corriente y las horas de uso diarias del mismo", font="Times 8").grid(row=3, column=0, columnspan=10)
-    ttk.Label(frame, text="Selecciona como máximo 10 dispositivos para la simulación, de lo contrario no se completará el proceso", font="Times 8").grid(row=4, column=0, columnspan=10)
-    ttk.Label(frame, text="", font="Times 8").grid(row=5, column=0, columnspan=10)
+    ttk.Label(frame, text="Selecciona como máximo 10 dispositivos para la simulación, de lo contrario no se completará el proceso", font="Times 8").grid(row=3, column=0, columnspan=10)
+    ttk.Label(frame, text="", font="Times 8").grid(row=4, column=0, columnspan=10)
 
     # Llamar a la función para crear contenido
-    crear_contenido(frame)
+    seleccion_dispositivos(frame)
     ventana.mainloop()
 
 if __name__ == "__main__":
