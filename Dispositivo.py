@@ -10,6 +10,10 @@ class dispositivo:
         self._tiempo = 0
 
     # Getter para verificar seleccion
+    def get_name(self):
+        return self.nombre
+
+    # Getter para verificar seleccion
     def get_seleccion(self):
         return self._seleccion
 

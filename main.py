@@ -113,8 +113,7 @@ def recopilar_informacion(seleccionados, variables_potencia, variables_voltaje, 
             datos.append(dispositivo)
 
     if len(datos) <= 10 and len(datos) != 0:
-        nombres = [dispositivo.get_name() for dispositivo in datos]
-        graficas.mostrar_circuito(nombres)
+        
         pass #HACER CALCULOS
     else:
         main()

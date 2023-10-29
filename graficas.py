@@ -13,57 +13,46 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import numpy as np
 
 
-'''
-Esto tenes que escribir en el main 
+def mostrar_grpafica(dispositivos=[]):
+    # Definir los puntos en el tiempo
+    images = []
 
-        nombres = [dispositivo.get_name() for dispositivo in datos]
-        graficas.mostrar_circuito(nombres)
+    for i,yeare in enumerate(dispositivos):
+        images.append("imagen1.png")
+
+    # Crear el gráfico
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(dispositivos, [0] * len(dispositivos), marker='', linestyle='-', color='b')  # Línea recta en el eje x
+    #ax.plot(dispositivos, [0.1] * len(dispositivos), marker='o', linestyle='-', color='b')  # Línea recta en el eje x
+    plt.ylim(-1, 1) 
+    plt.xlim(-1, dispositivos.size()) 
+
+    # Agregar las imágenes en los puntos deseados
+    for i, image_file in enumerate(images):
+        if i % 2 == 0:
+            y_points = [0, 0.3]
+            cambio = 0.6
+            nombre = 0.34
+        else:
+            y_points = [0, -0.3]
+            cambio = -0.6
+            nombre = -0.38
+        x_points = [i, i]
+        plt.plot(x_points, y_points, marker = 'o', linestyle='-', color='b')
+        img = plt.imread(image_file)
+        imagebox = OffsetImage(img, zoom=0.05)
+        ab = AnnotationBbox(imagebox, (dispositivos[i], cambio), frameon=False)
+        ax.add_artist(ab)
+        ax.text(dispositivos[i], nombre, dispositivos[i], ha='center')  
+
+    # Añadir etiquetas y título
+    plt.title('Dispositivos')
+    plt.yticks([])  # Ocultar el eje y
+    plt.xticks([])
+    # Mostrar el gráfico
+    plt.show()
 
 
-'''
-
-
-
-# Definir los puntos en el tiempo
-dispositivos = ["Televisor", "Televisor_1", "Televisor_2", "Televisor_3", "Televisor_4", "Televisor_5","Televisor_6","Televisor_7"]
-images = []
-
-for i,yeare in enumerate(dispositivos):
-    images.append("imagen1.png")
-
-
-
-# Crear el gráfico
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(dispositivos, [0] * len(dispositivos), marker='', linestyle='-', color='b')  # Línea recta en el eje x
-#ax.plot(dispositivos, [0.1] * len(dispositivos), marker='o', linestyle='-', color='b')  # Línea recta en el eje x
-plt.ylim(-1, 1) 
-plt.xlim(-1, 8) 
-
-# Agregar las imágenes en los puntos deseados
-for i, image_file in enumerate(images):
-    if i % 2 == 0:
-        y_points = [0, 0.3]
-        cambio = 0.6
-        nombre = 0.34
-    else:
-        y_points = [0, -0.3]
-        cambio = -0.6
-        nombre = -0.38
-    x_points = [i, i]
-    plt.plot(x_points, y_points, marker = 'o', linestyle='-', color='b')
-    img = plt.imread(image_file)
-    imagebox = OffsetImage(img, zoom=0.05)
-    ab = AnnotationBbox(imagebox, (dispositivos[i], cambio), frameon=False)
-    ax.add_artist(ab)
-    ax.text(dispositivos[i], nombre, dispositivos[i], ha='center')  
-
-# Añadir etiquetas y título
-plt.title('Dispositivos')
-plt.yticks([])  # Ocultar el eje y
-plt.xticks([])
-# Mostrar el gráfico
-plt.show()
 
 
 
