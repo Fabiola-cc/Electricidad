@@ -1,8 +1,9 @@
 import tkinter as tk
 
 class dispositivo:
-    def __init__(self, nombre):
+    def __init__(self, nombre, imagen):
         self.nombre = nombre
+        self.imagen = imagen
         self._seleccion = 0
         self._potencia = 0  # Atributos privados con un guion bajo al principio
         self._voltaje = 0

@@ -18,7 +18,7 @@ import graficas
 
 #Creacion de pantalla
 ventana = tk.Tk()
-ventana.geometry("700x650")
+ventana.geometry("800x650")
 
 def clear_frame():
     for widgets in ventana.winfo_children():
@@ -44,26 +44,26 @@ def clear_frame():
 
 #Opciones
 elementos = [
-    dispositivo("Televisión"),
-    dispositivo("Computadora"),
-    dispositivo("Teléfono"),
-    dispositivo("Consola de Juegos"),
-    dispositivo("Router WiFi"),
-    dispositivo("Impresora"),
-    dispositivo("Refrigeradora"),
-    dispositivo("Microondas"),
-    dispositivo("Cafetera"),
-    dispositivo("Tostadora"),
-    dispositivo("Air Fryer"),
-    dispositivo("Licuadora"),
-    dispositivo("Batidora"),
-    dispositivo("Lavadora"),
-    dispositivo("Secadora"),
-    dispositivo("Plancha de Ropa"),
-    dispositivo("Aspiradora"),
-    dispositivo("Ventilador"),
-    dispositivo("Luces"),
-    dispositivo("Cámara de Seguridad")]
+    dispositivo("Televisión", imagen= "imagenes/tv.jpg"),
+    dispositivo("Computadora", imagen= "imagenes/pc.jpg"),
+    dispositivo("Teléfono", imagen= "imagenes/telefono.jpg"),
+    dispositivo("Consola de Juegos", imagen= "imagenes/videojuego.jpg"),
+    dispositivo("Router WiFi", imagen= "imagenes/wifi.jpg"),
+    dispositivo("Impresora", imagen= "imagenes/impresora.jpg"),
+    dispositivo("Refrigeradora", imagen= "imagenes/refri.jpg"),
+    dispositivo("Microondas", imagen= "imagenes/microondas.png"),
+    dispositivo("Cafetera", imagen= "imagenes/cafe.jpg"),
+    dispositivo("Tostadora", imagen= "imagenes/tostadora.png"),
+    dispositivo("Air Fryer", imagen= "imagenes/airfryer.jpg"),
+    dispositivo("Licuadora", imagen= "imagenes/licuadora.jpg"),
+    dispositivo("Batidora", imagen= "imagenes/batidora.jpg"),
+    dispositivo("Lavadora", imagen= "imagenes/lavadora.png"),
+    dispositivo("Secadora", imagen= "imagenes/secadora.jpg"),
+    dispositivo("Plancha de Ropa", imagen= "imagenes/plancha.jpg"),
+    dispositivo("Aspiradora", imagen= "imagenes/aspiradora.jpg"),
+    dispositivo("Ventilador", imagen= "imagenes/ventilador.jpg"),
+    dispositivo("Luces", imagen= "imagenes/luz.jpg"),
+    dispositivo("Cámara de Seguridad", imagen= "imagenes/camara.jpg")]
 
 def seleccion_dispositivos(frame):
     # Listas para almacenar las variables de entrada
@@ -143,7 +143,8 @@ def agregar_datos(seleccionados):
             ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual + 5, column=columna, sticky="w")
 
         ttk.Label(frame, text="", font="Times 8").grid(row=fila_actual +6, column=0, columnspan=10)
-        ttk.Button(frame, text="Listo", command=lambda: recopilar_informacion(largo_cable, dispositivos, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo)).grid(row=fila_actual + 7, column=0, columnspan=10)
+        ttk.Button(frame, text="Listo", command=lambda: recopilar_informacion(largo_cable, dispositivos, variables_potencia, variables_voltaje, variables_corriente, variables_tiempo)).grid(row=fila_actual + 7, column=0, columnspan=5)
+        ttk.Button(frame, text="Atrás", command=main).grid(row=fila_actual + 7, column=1, columnspan=5)
     else:
         ttk.Label(frame, text="Haz seleccionado más de 10 dispositivos o ninguno\nRegresa y selecciona entre 1 y 10 dispositivos", font="Times 8").grid(row=fila_actual +6, column=0, columnspan=10)
         ttk.Button(frame, text="Atrás", command=main).grid(row=fila_actual + 7, column=0, columnspan=10)
@@ -156,9 +157,9 @@ def recopilar_informacion(largo_cable, dispositivos, variables_potencia, variabl
             dispositivo.set_corriente(variables_corriente[i].get())
             dispositivo.set_tiempo(variables_tiempo[i].get())
 
-    show_results(largo_cable, dispositivos)
+    results(largo_cable, dispositivos)
 
-def show_results(largo_cable, dispositivos):
+def results(largo_cable, dispositivos):
     frame = clear_frame()
     tk.Label(frame, text="", font="Times 10").grid(row=1, column=0, columnspan=10)
     costo_total = 0
@@ -170,19 +171,22 @@ def show_results(largo_cable, dispositivos):
         corriente_total += dispositivo.get_corriente()
         voltaje_total += dispositivo.get_voltaje()
         potencia_calculada = calc.Confirmacion_potencia(dispositivo.get_voltaje(), dispositivo.get_corriente())
-        if potencia_calculada == dispositivo.get_potencia():
-            ttk.Label(frame, text="Se ha corregido el valor de la potencia en: " + dispositivo.nombre, font="Times 10").grid(row=i+1, column=0, columnspan=10)
+        if potencia_calculada != dispositivo.get_potencia():
+            ttk.Label(frame, text="Se ha corregido el valor de la potencia en: " + dispositivo.nombre + " a: " + str(potencia_calculada), font="Times 10").grid(row=i+1, column=0, columnspan=10)
         costo_total += calc.calculo_costo(potencia_calculada, dispositivo.get_tiempo(), 30)
-
+    tk.Label(frame, text="Observa los resultados en la nueva pantalla", font="Times 10").grid(row=11, column=0, columnspan=10)
+    ttk.Button(frame, text="Atrás", command=main).grid(row=12, column=0, columnspan=10)
+    #MOSTRAR RESULTADOS
     calibre = calc.calculo_calibre(corriente_total, largo_cable, voltaje_total)
+    texto_calibre = ""
     if calibre == 0:
-        ttk.Label(frame, text="El diametro es mayor al que este programa calcula, prueba con otros datos", font="Times 12").grid(row=11, column=0, columnspan=10)
+        texto_calibre = "El diametro es mayor al que este programa calcula, prueba con otros datos"
     else:
-        ttk.Label(frame, text="El calibre del cable a usar es:" + calibre, font="Times 12").grid(row=11, column=0, columnspan=10)
-    ttk.Label(frame, text="Se cobrarán Q." + costo_total + "en el mes", font="Times 12").grid(row=12, column=0, columnspan=10)
-    ttk.Label(frame, text="Esta es una factura de Cobro de Baja Tensión Simple Social - BTSS", font="Times 10").grid(row=13, column=0, columnspan=10)
+        texto_calibre = "El calibre del cable a usar es:" + str(calibre)
+    texto_cobro = "Se cobrarán Q." + str(costo_total) + "en el mes"
+    tipo_factura = "Esta es una factura de Cobro de Baja Tensión Simple Social - BTSS"
 
-    graficas.mostrar_grafica(nombres)
+    graficas.mostrar_grafica(nombres, dispositivos, texto_calibre, texto_cobro, tipo_factura)
     
 def main():
     frame = clear_frame()

@@ -25,9 +25,12 @@ def calculo_calibre(Corriente_Total, largo_Cable, voltaje_total):
     #d^2 = IpL/V*(pi/4)
     
     resistividad = 1.72*10**(-8)
-    numerador = Corriente_Total*resistividad*largo_Cable
-    denominador = voltaje_total*(np.pi()/4)
-    diametro = np.sqrt(numerador/denominador)
+    numerador = Corriente_Total*resistividad*largo_Cable.get()
+    denominador = voltaje_total*(np.pi/4)
+    if denominador !=0:
+        diametro = np.sqrt(numerador/denominador)
+    else:
+        diametro = 0
 
     if 0 < diametro <= 0.163:
         return 14
