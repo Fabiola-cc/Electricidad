@@ -183,7 +183,7 @@ def results(largo_cable, dispositivos):
         texto_calibre = "El diametro es mayor al que este programa calcula, prueba con otros datos"
     else:
         texto_calibre = "El calibre del cable a usar es:" + str(calibre)
-    texto_cobro = "Se cobrarán Q." + str(costo_total) + "en el mes"
+    texto_cobro = "Se cobrarán Q." + "{:.2f}".format(costo_total) + " en el mes"
     tipo_factura = "Esta es una factura de Cobro de Baja Tensión Simple Social - BTSS"
 
     graficas.mostrar_grafica(nombres, dispositivos, texto_calibre, texto_cobro, tipo_factura)

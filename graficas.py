@@ -51,20 +51,3 @@ def mostrar_grafica(nombres, dispositivos, texto_calibre, texto_cobro, tipo_fact
     plt.xticks([])
     # Mostrar el gráfico
     plt.show()
-
-from Dispositivo import dispositivo
-elementos = [
-    dispositivo("Air Fryer", imagen= "imagenes/airfryer.jpg"),
-    dispositivo("Licuadora", imagen= "imagenes/licuadora.jpg"),
-    dispositivo("Batidora", imagen= "imagenes/batidora.jpg"),
-    dispositivo("Lavadora", imagen= "imagenes/lavadora.png"),
-    dispositivo("Secadora", imagen= "imagenes/secadora.jpg"),
-    dispositivo("Plancha de Ropa", imagen= "imagenes/plancha.jpg"),
-    dispositivo("Aspiradora", imagen= "imagenes/aspiradora.jpg"),
-    dispositivo("Ventilador", imagen= "imagenes/ventilador.jpg"),
-    dispositivo("Luces", imagen= "imagenes/luz.jpg"),
-    dispositivo("Cámara de Seguridad", imagen= "imagenes/camara.jpg")]
-nombres = []
-for i, d in enumerate(elementos):
-    nombres.append(d.nombre)
-mostrar_grafica(nombres, elementos, "qwerty", "asdfg", "zxcvbn")
